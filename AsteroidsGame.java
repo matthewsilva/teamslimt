@@ -72,6 +72,10 @@ public class AsteroidsGame extends BasicGame
     	invulnTime = 0;
     	shotSize = 20;
     	player = new Mob();
+    	player.setShotSize(20);
+    	player.setShotSpeed(3);
+    	player.setDx(0);
+    	player.setDy(0);
     	input = new KeyboardInput();
     	lives = 3;
     }
@@ -81,7 +85,8 @@ public class AsteroidsGame extends BasicGame
     {
     	movementTime += delta;
     	overallTime += delta;
-    	input.readInput(container, delta, player);
+    	input.readInput(container, delta, player, shotList);
+    	movePlayer();
     	if (movementTime >= frameTime) {
     		moveRoids(mobList);
     		moveShots(shotList);
@@ -92,8 +97,6 @@ public class AsteroidsGame extends BasicGame
     		mobList.add(randomRoid());
     		overallTime = 0;
     		System.out.println("Asteroid Spawned");
-    		//TEST TEST TEST
-    		shotList.add(topShot());
     	}
     	
     	checkPlayerCollisions(mobList, delta);
@@ -103,16 +106,16 @@ public class AsteroidsGame extends BasicGame
  
     public void render(GameContainer container, Graphics g) throws SlickException
     {
-    	g.draw(player.userShape());
+    	g.draw(player.getShape());
     	if(player.isInvincible())
     		g.drawString(lives + " Lives Left: INVINCIBILITY ACTIVATED",
-    				player.userShape().getCenterX(),
-    				player.userShape().getCenterY());
+    				player.getShape().getCenterX(),
+    				player.getShape().getCenterY());
     	for (Mob roid : mobList) {
-    		g.draw(roid.userShape());
+    		g.draw(roid.getShape());
     	}
     	for (Mob shot : shotList) {
-    		g.draw(shot.userShape());
+    		g.draw(shot.getShape());
     	}
     	
     	
@@ -124,13 +127,23 @@ public class AsteroidsGame extends BasicGame
     	
     }
     
-    public String livesString() {
+    private String livesString() {
     	String str = "";
     	for (int i = 0; i < lives; i++)
     		str = str + " I ";
     	return str;
     }
     
+    public void movePlayer() {
+    	if (player.getX() > rightEdge + 100 || player.getX() < -100) {
+			player.sideCollide();
+		}
+		if (player.getY() > bottomEdge + 100 || player.getY() < -100) {
+			player.topBotCollide();
+		}
+		player.move();	
+    }
+    // FIX WITH getShape.getMaxX for each edge (should be 4 collision functions with max dimension condition for each
     public void moveRoids(ArrayList<Mob> roids) {
     	for ( Mob roid : roids ) {
     		if (roid.getX() > rightEdge + 100 || roid.getX() < -100) {
@@ -144,8 +157,17 @@ public class AsteroidsGame extends BasicGame
     }
     
     public void moveShots(ArrayList<Mob> shots) {
-    	for ( Mob shot: shots ) {
-    		shot.move();
+    	int shtsze = shots.size();
+    	for (int i = 0; i < shtsze; i++) {
+    		shots.get(i).move();
+    		if (shots.get(i).getX() > rightEdge + 100 || shots.get(i).getX() < -100) {
+    			shots.remove(i);
+    		}
+    		else if (shots.get(i).getY() > bottomEdge + 100 || shots.get(i).getY() < -100) {
+    			shots.remove(i);
+    		}
+    		shtsze = shots.size();
+    		
     	}
     }
     
@@ -160,7 +182,7 @@ public class AsteroidsGame extends BasicGame
     	}
     	else {
     		for (Mob mob : roids) {
-        		if(mob.userShape().intersects(player.userShape())) {
+        		if(mob.getShape().intersects(player.getShape())) {
         			lives--;
         			player.setInvincible(true);
         		}
@@ -172,8 +194,9 @@ public class AsteroidsGame extends BasicGame
     public void checkShotCollisions(ArrayList<Mob> shots, ArrayList<Mob> roids) {
     	for (Mob shot : shots) {
     		for (Mob roid : roids) {
-    			if(shot.userShape().intersects(roid.userShape())) {
+    			if(shot.getShape().intersects(roid.getShape())) {
         			roid = null;
+        			System.out.println("Shot Collision");
         		}
     		}
     		
@@ -193,15 +216,6 @@ public class AsteroidsGame extends BasicGame
     	return new Mob(x, y, radius, radius, dx, dy, speed);
     }
     
-    public Mob topShot() {
-    	float x = player.userShape().getCenterX();
-		float y =  shotSize + 5 + player.userShape().getMinY();
-		float radius = shotSize;
-		float dx = 0;
-		float dy = -1;
-		float speed =  (float) (Math.random()*3);
-    	return new Mob(x, y, radius, radius, dx, dy, speed);
-    }
     
     
     /*

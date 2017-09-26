@@ -4,6 +4,8 @@
 
 
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -16,9 +18,11 @@ public class Mob
 
 	private Shape mob;
 	private static final float BOUNCEFACTOR = 1;
-	private float x = 34, y = 34;
+	private float x, y;
 	private float dx, dy;
     private float speed = 1;
+    private float shotSize;
+    private float shotSpeed;
     private boolean invincible = false;
 	
 	public Mob()
@@ -28,25 +32,29 @@ public class Mob
 	
 	public Mob(float x1, float y1, float x2, float y2)
 	{
+		x = x1;
+		y = y1;
 		mob = new Rectangle(x1, y1, x2, x2);
 	}
 	
 	public Mob(float x1, float y1, float x2, float y2, float speed)
 	{
+		x = x1;
+		y = y1;
 		mob = new Rectangle(x1, y1, x2, x2);
 		this.speed = speed;
 	}
 	
 	public Mob(float x1, float y1, float x2, float y2, float dx, float dy, float speed)
 	{
+		x = x1;
+		y = y1;
 		mob = new Rectangle(x1, y1, x2, x2);
 		this.dx = dx;
 		this.dy = dy;
 		this.speed = speed;
 		System.out.println(BOUNCEFACTOR);
 	}
-	
-	
 	
 	
 	public float getX() {
@@ -57,6 +65,22 @@ public class Mob
 		return y;
 	}
 	
+	public void setDx(float dx) {
+		this.dx = dx;
+	}
+	
+	public void setDy(float dy) {
+		this.dy = dy;
+	}
+	
+	public float getDx() {
+		return dx;
+	}
+	
+	public float getDy() {
+		return dy;
+	}
+	
 	public void setVelocity() {
 		dx = (float) (Math.floor(Math.random()*2)*2-1);
 		dy = (float) (Math.floor(Math.random()*2)*2-1);
@@ -64,6 +88,10 @@ public class Mob
 	
 	public void setSpeed(float givenSpeed) {
 		speed = givenSpeed;
+	}
+	
+	public float getSpeed() {
+		return speed;
 	}
 	
 	
@@ -99,7 +127,56 @@ public class Mob
 		invincible = invuln;
 	}
 	
-	public Shape userShape() {
+	public void setShotSize(float size) {
+		shotSize = size;
+	}
+	
+	public void setShotSpeed(float speed) {
+		shotSpeed = speed;
+	}
+	
+	public void shootUp(ArrayList<Mob> shots) {
+		float x = mob.getCenterX();
+		float y = mob.getMinY() - shotSize;
+		float radius = shotSize;
+		float dx = this.dx;
+		float dy = (this.dy - 2)*shotSpeed;
+		float speed = this.speed;
+		shots.add(new Mob(x, y, radius, radius, dx, dy, speed));
+		
+	}
+	
+	public void shootDown(ArrayList<Mob> shots) {
+		float x = mob.getCenterX();
+		float y = mob.getMaxY() + shotSize;
+		float radius = shotSize;
+		float dx = this.dx;
+		float dy = (this.dy + 2)*shotSpeed;
+		float speed =  this.speed;
+		shots.add(new Mob(x, y, radius, radius, dx, dy, speed));
+	}
+	
+	public void shootLeft(ArrayList<Mob> shots) {
+		float x = mob.getMinX() - shotSize;
+		float y = mob.getCenterY();
+		float radius = shotSize;
+		float dx = (this.dx - 2)*shotSpeed;
+		float dy = this.dy;
+		float speed =  this.speed;
+		shots.add(new Mob(x, y, radius, radius, dx, dy, speed));
+	}
+	
+	public void shootRight(ArrayList<Mob> shots) {
+		float x = mob.getMaxX() + shotSize;
+		float y = mob.getCenterY();
+		float radius = shotSize;
+		float dx = (this.dx + 2)*shotSpeed;
+		float dy = this.dy;
+		float speed = this.speed;
+		shots.add(new Mob(x, y, radius, radius, dx, dy, speed));
+	}
+ 	
+	public Shape getShape() {
 		return mob;
 	}
 }
