@@ -30,16 +30,20 @@ public class AsteroidsGame extends BasicGame
 	private final static int rightEdge = 500;
 	private final static int bottomEdge = 400;
 	private final int roidSpawnTime = 1000;
+	private final int powerTime = 2000;
 	private final int frameTime = 40;
+	
 	private int invulnTime;
 	private final int invulnLength = 1000;
 	private float shotSize;
 	private Mob player;
 	private ArrayList<Mob> mobList = new ArrayList();
 	private ArrayList<Mob> shotList = new ArrayList();
+	private ArrayList<Mob> powerList = new ArrayList();
 	private Mob roid1;
 	long movementTime;
 	long overallTime;
+	long overallPowerTime;
 	private int lives;
 	KeyboardInput input;
 	
@@ -69,6 +73,7 @@ public class AsteroidsGame extends BasicGame
     {
     	movementTime = 0;
     	overallTime = 0;
+    	overallPowerTime = 0;
     	invulnTime = 0;
     	shotSize = 20;
     	player = new Mob();
@@ -85,6 +90,7 @@ public class AsteroidsGame extends BasicGame
     {
     	movementTime += delta;
     	overallTime += delta;
+    	overallPowerTime += delta;
     	input.readInput(container, delta, player, shotList);
     	if (movementTime >= frameTime) {
     		movePlayer();
@@ -99,7 +105,16 @@ public class AsteroidsGame extends BasicGame
     		System.out.println("Asteroid Spawned");
     	}
     	
-    	checkPlayerCollisions(mobList, delta);
+    	if (overallPowerTime >= powerTime)
+    	{
+    		powerList.add(randomPower());
+    		overallPowerTime = 0;
+    		System.out.println("Asteroid Spawned");
+    	}
+    	
+    	
+    	
+    	checkPlayerCollisions(mobList, powerList, delta);
     	checkShotCollisions(shotList, mobList);
     	
     }
@@ -117,7 +132,10 @@ public class AsteroidsGame extends BasicGame
     	for (Mob shot : shotList) {
     		g.draw(shot.getShape());
     	}
-    	
+    	for (Mob power : powerList) {
+    		g.draw(power.getShape());
+    		System.out.print("rendered powerups");
+    	}
     	
     	g.drawString("Frame Updated\n Spawn Timer :" + overallTime
     			, 40, 50);
@@ -171,7 +189,7 @@ public class AsteroidsGame extends BasicGame
     	}
     }
     
-    public void checkPlayerCollisions(ArrayList<Mob> roids, int delta) {
+    public void checkPlayerCollisions(ArrayList<Mob> roids, ArrayList<Mob> powerups, int delta) {
     	
     	if (invulnTime > invulnLength) {
     		invulnTime = 0;
@@ -188,6 +206,12 @@ public class AsteroidsGame extends BasicGame
         		}
         	}
     	}
+    	for (int i = 0; i < powerups.size(); i++) {
+			if(player.getShape().intersects(powerups.get(i).getShape())) {
+    			powerups.get(i).powerup(player);
+				powerups.remove(i);
+    		}
+		}
     	
     }
     
@@ -216,6 +240,14 @@ public class AsteroidsGame extends BasicGame
     	return new Mob(x, y, radius, radius, dx, dy, speed);
     }
     
+    public Mob randomPower() {
+    	float x = (float) (Math.floor(Math.random()*250) + 100);
+		float y =  (float) (Math.floor(Math.random()*200) + 100);
+		float radius =  (float) (Math.floor(Math.random()*25) + 5);
+		Mob power = new Mob(x, y, radius, radius);
+		power.setPowerup(1);
+		return power;
+    }
     
     
     /*

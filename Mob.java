@@ -25,6 +25,7 @@ public class Mob
     private float shotSpeed;
     private final static float SHOTCONSTANT = 5;
     private boolean invincible = false;
+	private int powerupType;
 	
 	public Mob()
 	{
@@ -103,6 +104,18 @@ public class Mob
 		return speed;
 	}
 	
+	public void setPowerup(int type) {
+		powerupType = type;
+	}
+	
+	public int getPowerup() {
+		return powerupType;
+	}
+	
+	public void powerup(Mob player) {
+		if(powerupType == 1)
+			player.setShotSize(player.getShotSize()*1.1f);
+	}
 	
 	public void move() {
 		x += dx*speed;
@@ -134,6 +147,10 @@ public class Mob
 	
 	public void setInvincible(boolean invuln) {
 		invincible = invuln;
+	}
+	
+	public float getShotSize() {
+		return shotSize;
 	}
 	
 	public void setShotSize(float size) {
