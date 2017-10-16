@@ -29,19 +29,19 @@ public class KeyboardInput {
 		
     	if (input.isKeyDown(Input.KEY_W))
     	{
-    		player.setDy((float) (player.getDy() - 0.001));
+    		player.setDy((float) (player.getDy() - 0.05));
     	}
     	else if (input.isKeyDown(Input.KEY_S))
     	{
-    		player.setDy((float) (player.getDy() + 0.001));
+    		player.setDy((float) (player.getDy() + 0.05));
     	}
     	else if (input.isKeyDown(Input.KEY_A))
     	{
-    		player.setDx((float) (player.getDx() - 0.001));
+    		player.setDx((float) (player.getDx() - 0.05));
     	}
     	else if (input.isKeyDown(Input.KEY_D))
     	{
-    		player.setDx((float) (player.getDx() + 0.001));
+    		player.setDx((float) (player.getDx() + 0.05));
     		//player.move(delta * 0.1f, 0);
     	}
     	

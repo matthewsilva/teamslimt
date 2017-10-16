@@ -73,7 +73,7 @@ public class AsteroidsGame extends BasicGame
     	shotSize = 20;
     	player = new Mob();
     	player.setShotSize(20);
-    	player.setShotSpeed(3);
+    	player.setShotSpeed(1);
     	player.setDx(0);
     	player.setDy(0);
     	input = new KeyboardInput();
@@ -86,8 +86,8 @@ public class AsteroidsGame extends BasicGame
     	movementTime += delta;
     	overallTime += delta;
     	input.readInput(container, delta, player, shotList);
-    	movePlayer();
     	if (movementTime >= frameTime) {
+    		movePlayer();
     		moveRoids(mobList);
     		moveShots(shotList);
     		movementTime = 0;
@@ -193,9 +193,9 @@ public class AsteroidsGame extends BasicGame
     
     public void checkShotCollisions(ArrayList<Mob> shots, ArrayList<Mob> roids) {
     	for (Mob shot : shots) {
-    		for (Mob roid : roids) {
-    			if(shot.getShape().intersects(roid.getShape())) {
-        			roid = null;
+    		for (int i = 0; i < roids.size(); i++) {
+    			if(shot.getShape().intersects(roids.get(i).getShape())) {
+        			roids.remove(i);
         			System.out.println("Shot Collision");
         		}
     		}

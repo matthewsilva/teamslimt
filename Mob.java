@@ -23,6 +23,7 @@ public class Mob
     private float speed = 1;
     private float shotSize;
     private float shotSpeed;
+    private final static float SHOTCONSTANT = 5;
     private boolean invincible = false;
 	
 	public Mob()
@@ -63,6 +64,14 @@ public class Mob
 	
 	public float getY() {
 		return y;
+	}
+	
+	public void setX(int x) {
+		this.x = x;
+	}
+	
+	public void setY(int y) {
+		this.y = y;
 	}
 	
 	public void setDx(float dx) {
@@ -136,44 +145,44 @@ public class Mob
 	}
 	
 	public void shootUp(ArrayList<Mob> shots) {
-		float x = mob.getCenterX();
+		float diameter = shotSize;
+		float x = mob.getCenterX() - 0.5f*diameter;
 		float y = mob.getMinY() - shotSize;
-		float radius = shotSize;
 		float dx = this.dx;
-		float dy = (this.dy - 2)*shotSpeed;
+		float dy = (this.dy - SHOTCONSTANT*shotSpeed);
 		float speed = this.speed;
-		shots.add(new Mob(x, y, radius, radius, dx, dy, speed));
+		shots.add(new Mob(x, y, diameter, diameter, dx, dy, speed));
 		
 	}
 	
 	public void shootDown(ArrayList<Mob> shots) {
-		float x = mob.getCenterX();
-		float y = mob.getMaxY() + shotSize;
-		float radius = shotSize;
+		float diameter = shotSize;
+		float x = mob.getCenterX() - 0.5f*diameter;
+		float y = mob.getMaxY();
 		float dx = this.dx;
-		float dy = (this.dy + 2)*shotSpeed;
+		float dy = (this.dy + SHOTCONSTANT*shotSpeed);
 		float speed =  this.speed;
-		shots.add(new Mob(x, y, radius, radius, dx, dy, speed));
+		shots.add(new Mob(x, y, diameter, diameter, dx, dy, speed));
 	}
 	
 	public void shootLeft(ArrayList<Mob> shots) {
+		float diameter = shotSize;
 		float x = mob.getMinX() - shotSize;
-		float y = mob.getCenterY();
-		float radius = shotSize;
-		float dx = (this.dx - 2)*shotSpeed;
+		float y = mob.getCenterY() - 0.5f*diameter;
+		float dx = (this.dx - SHOTCONSTANT*shotSpeed);
 		float dy = this.dy;
 		float speed =  this.speed;
-		shots.add(new Mob(x, y, radius, radius, dx, dy, speed));
+		shots.add(new Mob(x, y, diameter, diameter, dx, dy, speed));
 	}
 	
 	public void shootRight(ArrayList<Mob> shots) {
-		float x = mob.getMaxX() + shotSize;
-		float y = mob.getCenterY();
-		float radius = shotSize;
-		float dx = (this.dx + 2)*shotSpeed;
+		float diameter = shotSize;
+		float x = mob.getMaxX();
+		float y = mob.getCenterY() - 0.5f*diameter;
+		float dx = (this.dx + SHOTCONSTANT*shotSpeed);
 		float dy = this.dy;
 		float speed = this.speed;
-		shots.add(new Mob(x, y, radius, radius, dx, dy, speed));
+		shots.add(new Mob(x, y, diameter, diameter, dx, dy, speed));
 	}
  	
 	public Shape getShape() {
