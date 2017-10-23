@@ -45,6 +45,7 @@ public class AsteroidsGame extends BasicGame
 	long overallTime;
 	long overallPowerTime;
 	private int lives;
+	private int score;
 	KeyboardInput input;
 	
 	public AsteroidsGame()
@@ -119,31 +120,41 @@ public class AsteroidsGame extends BasicGame
     	
     }
  
-    public void render(GameContainer container, Graphics g) throws SlickException
-    {
-    	g.draw(player.getShape());
-    	if(player.isInvincible())
-    		g.drawString(lives + " Lives Left: INVINCIBILITY ACTIVATED",
-    				player.getShape().getCenterX(),
-    				player.getShape().getCenterY());
-    	for (Mob roid : mobList) {
-    		g.draw(roid.getShape());
-    	}
-    	for (Mob shot : shotList) {
-    		g.draw(shot.getShape());
-    	}
-    	for (Mob power : powerList) {
+    //You just need to set the color before you draw the object after that object has been drawn you can
+    //reset the color before the next object to something new if you want the color to be different from what it already is
+       public void render(GameContainer container, Graphics g) throws SlickException
+       {
+       	g.setColor(Color.green);
+       	g.draw(player.getShape());
+       	
+       	if(player.isInvincible())
+       		g.drawString(lives + " Lives Left: INVINCIBILITY ACTIVATED",
+       				player.getShape().getCenterX(),
+       				player.getShape().getCenterY());
+       	g.setColor(Color.white);
+       	for (Mob roid : mobList) {
+       		g.draw(roid.getShape());
+       	}
+       	g.setColor(Color.blue);
+       	for (Mob shot : shotList) {
+       		g.draw(shot.getShape());
+       	}
+       	
+       	for (Mob power : powerList) {
     		g.draw(power.getShape());
     		System.out.print("rendered powerups");
     	}
-    	
-    	g.drawString("Frame Updated\n Spawn Timer :" + overallTime
-    			, 40, 50);
-    	g.drawString("Frame Updated\n Move Timer :" + movementTime
-    			, 40, 100);
-    	g.drawString("Lives: " + livesString(), (int) (rightEdge*0.1), (int) (bottomEdge*0.1));
-    	
-    }
+       	
+       	
+    // 	g.drawString("Frame Updated\n Spawn Timer :" + overallTime
+    //   			, 40, 50);
+    //   	g.drawString("Frame Updated\n Move Timer :" + movementTime
+    //   			, 40, 100);
+       	g.setColor(Color.white);
+       	g.drawString("Lives: " + livesString(), (int) (rightEdge*0.1), (int) (bottomEdge*0.1));
+       	g.drawString("Score: " + score, (int) (rightEdge*0.1), (int) (bottomEdge*0.15));
+       	
+       }
     
     private String livesString() {
     	String str = "";
@@ -220,6 +231,7 @@ public class AsteroidsGame extends BasicGame
     		for (int i = 0; i < roids.size(); i++) {
     			if(shot.getShape().intersects(roids.get(i).getShape())) {
         			roids.remove(i);
+        			score ++;
         			System.out.println("Shot Collision");
         		}
     		}
