@@ -1,9 +1,3 @@
-
-
-
-
-
-
 import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
@@ -17,7 +11,7 @@ public class Mob
 {
 
 	private Shape mob;
-	private static final float BOUNCEFACTOR = 1;
+	private static final double BOUNCEFACTOR = .25;
 	private float x, y;
 	private float dx, dy;
     private float speed = 1;
@@ -133,12 +127,13 @@ public class Mob
 	
 	public void sideCollide() {
 		dx*=-1;
-		dy*=(Math.floor(Math.random()*2)*2-1)*((Math.random()*BOUNCEFACTOR)+1);
+		dy*=(Math.floor(Math.random()*2)*2-1)*((Math.random()*BOUNCEFACTOR));
+		
 	}
 	
 	public void topBotCollide() {
 		dy*=-1;
-		dx*=(Math.floor(Math.random()*2)*2-1)*((Math.random()*BOUNCEFACTOR)+1);
+		dx*=(Math.floor(Math.random()*2)*2-1)*((Math.random()*BOUNCEFACTOR));
 	}
 	
 	public boolean isInvincible() {
