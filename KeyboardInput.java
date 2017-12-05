@@ -3,47 +3,62 @@ import java.util.ArrayList;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
-public class KeyboardInput {
+public class KeyboardInput 
+{
+	
+	private double velocityConstraint;
 
-	public KeyboardInput() {
-		
+	public KeyboardInput() 
+	{
+		velocityConstraint = 20;
 	}
-	public void readInput(GameContainer container, int delta, Mob player, ArrayList<Mob> shots) {
+	public void readInput(GameContainer container, int delta, Player player, ArrayList<Projectile> shots) {
 		Input input = container.getInput();
+		
+
 		if (input.isKeyPressed(Input.KEY_UP))
 		{
-			player.shootUp(shots);
+			shots.addAll(player.shootUp(shots));
+			System.out.println(player.getYPos());
+			System.out.println(player.getYVel());
 		}
 		else if (input.isKeyPressed(Input.KEY_DOWN))
 		{
-			player.shootDown(shots);
+			shots.addAll(player.shootDown(shots));
 		}
 		else if (input.isKeyPressed(Input.KEY_LEFT))
 		{
-			player.shootLeft(shots);
+			shots.addAll(player.shootLeft(shots));
 		}
 		else if (input.isKeyPressed(Input.KEY_RIGHT))
 		{
-			player.shootRight(shots);
+			shots.addAll(player.shootRight(shots));
 		}
 		
     	if (input.isKeyDown(Input.KEY_W))
     	{
-    		player.setDy((float) (player.getDy() - 0.05));
+    		player.setYVelocity(player.constrain(player.getYVel() - 0.05, -velocityConstraint, velocityConstraint));
     	}
     	else if (input.isKeyDown(Input.KEY_S))
     	{
-    		player.setDy((float) (player.getDy() + 0.05));
+    		player.setYVelocity(player.constrain(player.getYVel() + 0.05, -velocityConstraint, velocityConstraint));
     	}
-    	else if (input.isKeyDown(Input.KEY_A))
+    	if (input.isKeyDown(Input.KEY_A))
     	{
-    		player.setDx((float) (player.getDx() - 0.05));
+        player.setXVelocity(player.constrain(player.getXVel() - 0.05, -velocityConstraint, velocityConstraint));
     	}
     	else if (input.isKeyDown(Input.KEY_D))
     	{
-    		player.setDx((float) (player.getDx() + 0.05));
+         player.setXVelocity(player.constrain(player.getXVel() + 0.05, -velocityConstraint, velocityConstraint));
     		//player.move(delta * 0.1f, 0);
     	}
-    	
+    	else if (input.isKeyDown(Input.KEY_E))
+    	{
+    		player.setVelocity(0, 0);
+    		
 	}
+    	else if (input.isKeyDown(Input.KEY_M)) {
+    		player.setShotType(new DoubleShot());
+    	}
+}
 }
