@@ -2,6 +2,7 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Shape;
 
 public class Projectile extends drawableObject
 {
@@ -22,18 +23,21 @@ public class Projectile extends drawableObject
 		yVelocity = player.getShotSpeed();
 		shotSheet = new SpriteSheet("data/ship.png", 32, 32);
 		shotAnimation = new Animation(shotSheet, 100);
+		shotHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
 	}
 	
 	public Projectile(int myxVelocity, int myyVelocity) throws SlickException 
 	{
 		xVelocity = myxVelocity;
 		yVelocity = myyVelocity;
+		shotHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
 	}
 	
 	public Projectile(int x, int y, double dx, double dy) throws SlickException {
 		super(x, y, dx, dy);
 		shotSheet = new SpriteSheet("data/ship.png", 32, 32);
 		shotAnimation = new Animation(shotSheet, 100);
+		shotHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
 	}
 	
 	
@@ -85,6 +89,16 @@ public class Projectile extends drawableObject
     return false;
         	
     }//end checkPosition
+    
+    public void move()
+    {
+    		System.out.println(shotHitbox.getCenterX());
+    		super.move();
+    		shotHitbox.setX(this.getXPos());
+    		shotHitbox.setY(this.getYPos());
+    		
+    }//Moves the block according to the x and y velocity
+    
     
 	
 	

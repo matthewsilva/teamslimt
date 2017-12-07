@@ -195,7 +195,21 @@ public void alienCollide(ArrayList<Alien> aliens, Player myPlayer)
 }
 
 public void shotCollide(ArrayList<Alien> aliens, ArrayList<Projectile> shots) {
-	
+	for (int i = 0; i < aliens.size(); i++)
+	{
+		for(int j = 0; j < shots.size(); j++) {
+			if (aliens.get(i) != null && shots.get(i) != null) {
+				
+			
+				if (aliens.get(i).intersects(shots.get(j)))
+				{
+					aliens.remove(i);
+					shots.remove(j);
+			
+				}
+			}
+		}
+	}
 }
 
 

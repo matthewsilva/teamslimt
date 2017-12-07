@@ -44,6 +44,7 @@ public class Alien extends drawableObject
         yVelocity = constrain(myXVel, -10, 10);
 		alienSheet = new SpriteSheet("data/alien_spritesheet.png", 32, 32);
 		alienAnimation = new Animation(alienSheet, 100);
+		alienHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
 		
 	}
 	
@@ -129,6 +130,8 @@ public class Alien extends drawableObject
     
     public void moveBy(int dX, int dY)
     {
+    	alienHitbox.setX(this.getXPos());
+		alienHitbox.setY(this.getYPos());
     		xPosition += dX;
     		yPosition += dY;
     }// Moves the block by the change in x and y
@@ -136,9 +139,10 @@ public class Alien extends drawableObject
 	
     public void move()
     {
-    		xPosition += xVelocity;
-    		yPosition += yVelocity;
-    		alienHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());	
+    		super.move();
+    		alienHitbox.setX(this.getXPos());
+    		alienHitbox.setY(this.getYPos());
+    		
     }//Moves the block according to the x and y velocity
     
     
