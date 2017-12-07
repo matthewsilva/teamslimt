@@ -141,12 +141,13 @@ private void controlBoss(Boss boss) {
 	
 }
 
-private void updateShots(ArrayList<Projectile> shots) {
-	for (int i = 0; i < shots.size(); i++)
-	{
-		if (shots.get(i).checkWalls()) shots.remove(i);
-		else shots.get(i).move();
-	}
+public void updateShots (ArrayList<Projectile> aliens)
+{
+		for (Projectile alien : aliens)
+		{
+			alien.checkPosition();
+			alien.move();
+		}
 }
 
 public void keyReleased(int key, char c) {
@@ -188,7 +189,6 @@ public void alienCollide(ArrayList<Alien> aliens, Player myPlayer)
 		if (alien.intersects(myPlayer))
 		{
 			myPlayer.setLives(myPlayer.getLives() - 1);
-			System.out.println("collision");
 			myPlayer.setInvincible(true);
 		}
 	}
@@ -198,15 +198,19 @@ public void shotCollide(ArrayList<Alien> aliens, ArrayList<Projectile> shots) {
 	for (int i = 0; i < aliens.size(); i++)
 	{
 		for(int j = 0; j < shots.size(); j++) {
-			if (aliens.get(i) != null && shots.get(i) != null) {
-				
-			
-				if (aliens.get(i).intersects(shots.get(j)))
-				{
-					aliens.remove(i);
-					shots.remove(j);
-			
+			try {
+				if (aliens.get(i) != null && shots.get(i) != null) {
+					if (aliens.get(i).intersects(shots.get(j)))
+					{
+						aliens.remove(i);
+						shots.remove(j);
+						score++;
+						return;
+					}
 				}
+			} catch (Exception e){
+			e.printStackTrace();
+			
 			}
 		}
 	}

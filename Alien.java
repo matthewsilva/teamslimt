@@ -139,10 +139,10 @@ public class Alien extends drawableObject
 	
     public void move()
     {
-    		super.move();
+    		xPosition += xVelocity;
+    		yPosition += yVelocity;
     		alienHitbox.setX(this.getXPos());
     		alienHitbox.setY(this.getYPos());
-    		
     }//Moves the block according to the x and y velocity
     
     

@@ -19,8 +19,6 @@ public class KeyboardInput
 		if (input.isKeyPressed(Input.KEY_UP))
 		{
 			shots.addAll(player.shootUp(shots));
-			System.out.println(player.getYPos());
-			System.out.println(player.getYVel());
 		}
 		else if (input.isKeyPressed(Input.KEY_DOWN))
 		{
