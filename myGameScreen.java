@@ -46,6 +46,8 @@ public class myGameScreen extends BasicGameState
 	private int score;
 	KeyboardInput input;
 	
+	private AnimationHandler animationHandler;
+	
 
 
 @Override
@@ -60,6 +62,7 @@ public void init(GameContainer container, StateBasedGame game) throws SlickExcep
 	player = new Player();
 	player.moveTo(400, 400);
 	input = new KeyboardInput();
+	animationHandler = new AnimationHandler();
 	
 }
 
@@ -68,21 +71,30 @@ public void render(GameContainer container, StateBasedGame game, Graphics g) thr
 {
 	
 	
-	player.getAnimation().draw(player.getXPos(),player.getYPos());
+	animationHandler.getShipAnimation().draw(player.getXPos(),player.getYPos());
    	
    	for (Alien alien : aliens) 
    	{
-   		alien.getAnimation().draw(alien.getXPos(), alien.getYPos());
+   		animationHandler.getPinkAnimation().draw(alien.getXPos(), alien.getYPos());
    	}
    	
    	for (Projectile shot : shots) 
    	{
-   		shot.getAnimation().draw(shot.getXPos(),shot.getYPos());
+   		animationHandler.getProjectileAnimation().draw(shot.getXPos(),shot.getYPos());
    	}
    	
    	g.setColor(Color.white);
-   	g.drawString("Lives: " + player.getlivesString(), 5, 40);
-   	g.drawString("Score: " + score, 5, 60);
+   	g.drawString("Lives: ", 5, 40);
+   	for(int i = 0; i < player.getLives(); i++)
+   	{  	
+   		
+   		animationHandler.getShipHealthAnimation().draw(70 + (30 * i), 25);  
+   		
+   	}
+   	for(int i = 3; (i > player.getLives() && i > 0); i--)
+   	{
+   		animationHandler.getShipEmptyHealthAnimation().draw(40 + (30 * i), 25);
+   	}
    	
    }
 

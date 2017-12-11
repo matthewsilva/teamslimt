@@ -14,15 +14,14 @@ import org.newdawn.slick.geom.Shape;
 public class singleShot implements ShootingStrategy {
 
 	
-	public ArrayList<Projectile> upShots(Player player) {
+	public ArrayList<Projectile> upShots(Player player) 
+	{
 		ArrayList<Projectile> shots = new ArrayList<Projectile>();
 		float diameter = player.getShotSize();
 		int x = player.getXPos();
 		int y = (int) (player.getYPos() - 0.5f*diameter);
 		double dx = (player.getXVel());
 		double dy = (player.getYVel() - player.getShotSpeed());
-		//System.out.println("Player shot speed = " +  player.getShotSpeed());
-		//System.out.println("Assigned dy =" + dy);
 		float speed = player.getSpeed();
 		Projectile shot1 = null;
 		try {
@@ -38,7 +37,8 @@ public class singleShot implements ShootingStrategy {
 		return shots;
 	}
 	
-	public ArrayList<Projectile> downShots(Player player) {
+	public ArrayList<Projectile> downShots(Player player) 
+	{
 		ArrayList<Projectile> shots = new ArrayList<Projectile>();
 		float diameter = player.getShotSize();
 		int x = player.getXPos();
@@ -59,7 +59,8 @@ public class singleShot implements ShootingStrategy {
 		return shots;
 	}
 	
-	public ArrayList<Projectile> leftShots(Player player) {
+	public ArrayList<Projectile> leftShots(Player player) 
+	{
 		ArrayList<Projectile> shots = new ArrayList<Projectile>();
 		float diameter = player.getShotSize();
 		int x = player.getXPos();

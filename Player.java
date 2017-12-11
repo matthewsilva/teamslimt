@@ -36,7 +36,7 @@ public class Player extends drawableObject{
         playerSheet = new SpriteSheet("data/ship.png", 72, 72);
         playerAnimation = new Animation(playerSheet, 200);
     		playerHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
-    	shotType = new singleShot();
+    		shotType = new singleShot();
     	
     }
 
@@ -55,6 +55,11 @@ public class Player extends drawableObject{
     public int getLives()
     {
     		return lives;
+    }
+    
+    public int getEmptyLives()
+    {
+    		return 3 - lives;
     }
     
     public int getShotSpeed()
@@ -94,11 +99,11 @@ public class Player extends drawableObject{
 		invincible = invuln;
 	}
     
-    public void setLives(int myLives)
+    public void setLives(int d)
     {
-    	if (myLives < lives && invincible == true);
-    	else
-    		lives = myLives;
+    		if (d < lives && invincible == true);
+    		else
+    		lives = d;
     }
     
     public void setShotSpeed(int myShotSpeed)
@@ -108,11 +113,12 @@ public class Player extends drawableObject{
     
     public void setShotSize(int myShotSize)
     {
-    	shotSize = myShotSize;
+    		shotSize = myShotSize;
     }
     
-    public void setShotType(ShootingStrategy type) {
-    	shotType = type;
+    public void setShotType(ShootingStrategy type) 
+    {
+    		shotType = type;
     }
     
     public void setSpeed(int myPlayerSpeed)
