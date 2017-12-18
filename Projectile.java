@@ -23,7 +23,7 @@ public class Projectile extends drawableObject
 		yPosition = player.getYPos();
 		xVelocity = player.getShotSpeed();
 		yVelocity = player.getShotSpeed();
-		shotSheet = new SpriteSheet("data/ship.png", 32, 32);
+		shotSheet = new SpriteSheet("data/projectile.png", 16, 16);
 		shotAnimation = new Animation(shotSheet, 100);
 		shotHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
 	}

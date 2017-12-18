@@ -1,11 +1,3 @@
-/**
- * ISSUE: BLEEP BLOOP
- * 
- * I had to instantiate Projectiles using (x, y, dy, dx), while the proper way is (x, y, dx, dy).
- * Need to investigate.
- * 
- */
-
 import java.util.ArrayList;
 
 import org.newdawn.slick.SlickException;

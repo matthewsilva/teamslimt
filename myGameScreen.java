@@ -1,3 +1,4 @@
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -21,70 +22,97 @@ import org.newdawn.slick.geom.Shape;
 
 public class myGameScreen extends BasicGameState 
 {
-	
+	//Data fields
 	public static final int ID = 2; //State ID
-	
-	
-	private Shape testShape;
-	private final static int rightEdge = 800;
-	private final static int bottomEdge = 800;
-	private final int alienSpawnTime = 1000;
-	private final int powerTime = 2000;
-	private final int frameTime = 40;
 	private StateBasedGame game;
+
+	private final int powerupSpawnTime = 2000;
+	private final int alienSpawnTime = 500;
+	private final int frameTime = 40;
+	
+	private ArrayList<Alien> aliens= new ArrayList();
+	private ArrayList<Projectile> shots = new ArrayList();
+	private ArrayList<Powerup> powerups = new ArrayList();
 	
 	private int invulnTime;
-	private final int invulnLength = 1000;
-	private float shotSize;
 	private Player player;
-	private ArrayList<Alien> aliens= new ArrayList();
 	private Boss brain;
-	private ArrayList<Projectile> shots = new ArrayList();
+	private int enemyCap = 10;
 	long movementTime;
 	long overallTime;
-	long overallPowerTime;
+	long powerupTime;
+	long invulnLength;
 	private int score;
 	KeyboardInput input;
+	
+	private AnimationHandler animationHandler;
 	
 
 
 @Override
 public void init(GameContainer container, StateBasedGame game) throws SlickException 
 {
+	//Game initialization
 	this.game = game;
-	movementTime = 0;
-	overallTime = 0;
-	overallPowerTime = 0;
-	invulnTime = 0;
-	shotSize = 20;
 	player = new Player();
 	player.moveTo(400, 400);
-	input = new KeyboardInput();
+	player.setXVelocity(0.0);
+	player.setYVelocity(0.0);
+	animationHandler = new AnimationHandler();
+	score = 0;
+	movementTime = 0;
+	overallTime = 0;
+	powerupTime = 0;
+	invulnTime = 0;
+	invulnLength = 0;
 	
 }
 
 @Override
 public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException 
 {
-	
-	
-	player.getAnimation().draw(player.getXPos(),player.getYPos());
+	//Draws the player's ship
+	animationHandler.getShipAnimation().draw(player.getXPos(),player.getYPos());
    	
+	//Draws the aliens
    	for (Alien alien : aliens) 
    	{
-   		alien.getAnimation().draw(alien.getXPos(), alien.getYPos());
+   		animationHandler.getRandomAlienAnimation(alien.getType()).draw(alien.getXPos(), alien.getYPos());
    	}
    	
+   	//Draws the powerups
+   	for (Powerup powerup : powerups) 
+   	{
+   		animationHandler.getRandomPowerupAnimation(powerup.getType()).draw(powerup.getXPos(), powerup.getYPos());
+   	}
+   	
+   	//Draws the projectiles
    	for (Projectile shot : shots) 
    	{
-   		shot.getAnimation().draw(shot.getXPos(),shot.getYPos());
+   		animationHandler.getProjectileAnimation().draw(shot.getXPos(),shot.getYPos());
+   	}   
+   	
+   	//Draws the player's current Health
+   	g.setColor(Color.white);
+   	g.drawString("Health: ", 5, 40);
+   	drawLives();
+   	
+   	//Draws the players stats
+   	g.drawString("Invincible: " + player.isInvincible(), 5, 60);
+   	g.drawString("Top Speed: " + player.getInput().getConstraint(), 5, 80);
+   	g.drawString("Shot Interval: " + player.getInput().getShotInterval(), 5, 100);
+   	//Draws the score
+   	g.drawString("Score: " + score, 700, 40);
+   	
+   	if(player.getLives() == 0)
+   	{
+   		g.clear();
+   		g.drawString("GAME OVER", 350, 350);
+   		g.drawString("Press esc to return to the main menu.", 250, 700);
    	}
    	
-   	g.setColor(Color.white);
-   	g.drawString("Lives: " + player.getlivesString(), 5, 40);
-   	g.drawString("Score: " + score, 5, 60);
-   	
-   }
+   	   	
+}
 
 
 
@@ -92,108 +120,119 @@ public void render(GameContainer container, StateBasedGame game, Graphics g) thr
 @Override
 public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 
+	//Keeps track of various timers via incrementing by delta 
 	movementTime += delta;
 	overallTime += delta;
-	overallPowerTime += delta;
+	powerupTime += delta;
+	invulnLength = player.getInvulnLength();
+	input = player.getInput();
 	
 	input.readInput(container, delta, player, shots);
 	
+	//General game updates during gameplay
 	if (movementTime >= frameTime) 
 	{
 		player.move();
 		player.checkPosition();
-		if(brain != null) brain.move();
-		if(brain != null) controlBoss(brain);
-		updateShots(shots);
-		updateAliens(aliens);
-		alienCollide(aliens, player);
+		updateObjectMovement(aliens, shots);
+		checkCollisions(aliens, powerups, player);
 		shotCollide(aliens, shots);
-		
+		if(brain != null)
+		{
+			brain.move();
+			brain.getAnimation().draw(400,400);
+			controlBoss(brain);
+		}
 		movementTime = 0;
 	}
-	if (overallTime >= alienSpawnTime)
+		
+	//Alien spawn
+	if (overallTime >= alienSpawnTime && aliens.size() < enemyCap)
 	{		
 		aliens.add(new Alien());
 		overallTime = 0;
+	} 
+		
+	//Powerup spawn
+	if (powerupTime >= powerupSpawnTime)
+	{
+		powerups.add(new Powerup());
+		powerupTime = 0;
 	}
-	if (invulnTime > invulnLength) {
-		invulnTime = 0;
-		player.setInvincible(false);
-	}
-	if (player.isInvincible()) {
+	
+	//Keeps track of how long the player has been invincible
+	if (player.isInvincible()) 
+	{
 		invulnTime += delta;
 	}
 	
-	if (score > 50) {
+	//Resets invincibility
+	if (invulnTime > invulnLength) 
+	{
+		player.setInvincible(false);
+		player.setInvulnLength((long) 1000);
+		invulnTime = 0;
+	}
+	
+	//Spawn new boss
+	if (score > 10) {
 		brain = new Boss();
 	}
 	
 	
-	
-	
-	//checkPlayerCollisions(mobList, powerList, delta);
-	//checkShotCollisions(shotList, mobList);
-	
 }
 
-private void controlBoss(Boss boss) {
-	
-	
-}
-
-public void updateShots (ArrayList<Projectile> aliens)
+private void controlBoss(Boss boss) 
 {
-		for (Projectile alien : aliens)
-		{
-			alien.checkPosition();
-			alien.move();
-		}
+	
+	
 }
 
-public void keyReleased(int key, char c) {
-    
-    if (key == Input.KEY_ESCAPE) {
-       GameState target = game.getState(TitleScreen.ID);
-       
-       final long start = System.currentTimeMillis();
-       CrossStateTransition t = new CrossStateTransition(target) 
-       {            
-          public boolean isComplete() 
-          {
-             return (System.currentTimeMillis() - start) > 2000;
-          }
-
-          public void init(GameState firstState, GameState secondState) {
-          }
-       };
-       
-       game.enterState(TitleScreen.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
-    
- }
-}
-
-
-public void updateAliens (ArrayList<Alien> aliens)
+//Updates the positions of the drawableObjects
+public void updateObjectMovement (ArrayList<Alien> aliens, ArrayList<Projectile> shots)
 {
+		//Moves aliens
 		for (Alien alien : aliens)
 		{
-			alien.checkPosition();
+			alien.checkAlienPosition();
 			alien.move();
 		}
+		
+		//Moves projectiles
+		for (Projectile shot : shots)
+		{
+			shot.checkPosition();
+			shot.move();
+		}
+		
 }
 
-public void alienCollide(ArrayList<Alien> aliens, Player myPlayer)
+//Checks for player collisions with the aliens and powerups
+public void checkCollisions(ArrayList<Alien> aliens, ArrayList<Powerup> powerups, Player myPlayer)
 {
+	//Checks for alien collisions
 	for (Alien alien : aliens)
 	{
-		if (alien.intersects(myPlayer))
+		if (alien.intersects(myPlayer) && !myPlayer.isInvincible())
 		{
 			myPlayer.setLives(myPlayer.getLives() - 1);
 			myPlayer.setInvincible(true);
 		}
 	}
+	
+	//Checks for powerup collisions
+	for (Powerup powerup : powerups)
+	{
+		if(powerup.intersectsPlayer(myPlayer))
+		{
+			powerup.powerupFunction(myPlayer);
+			powerup.moveOffScreen();
+		}
+	}
+	
 }
 
+//Checks if the aliens have been hit
 public void shotCollide(ArrayList<Alien> aliens, ArrayList<Projectile> shots) {
 	for (int i = 0; i < aliens.size(); i++)
 	{
@@ -217,75 +256,55 @@ public void shotCollide(ArrayList<Alien> aliens, ArrayList<Projectile> shots) {
 }
 
 
+//Draws the players current lives
+public void drawLives()
+{
+	//Draws full heart pips
+	for(int i = 0; i < player.getLives() && i < player.getHealthPips(); i++)
+   	{  	
+   		
+   		animationHandler.getShipHealthAnimation().draw(70 + (30 * i), 25);  
+   		
+   	}
+	//Draws empty heart pips
+   	for(int i = player.getHealthPips(); (i > player.getLives() && i > 0); i--)
+   	{
+   		
+   		animationHandler.getShipEmptyHealthAnimation().draw(40 + (30 * i), 25);
+   		
+   	}
+	
+}
+
+//Allows for changing between states
+public void keyReleased(int key, char c) {
+    
+    if (key == Input.KEY_ESCAPE) {
+       GameState target = game.getState(TitleScreen.ID);
+       
+       final long start = System.currentTimeMillis();
+       CrossStateTransition t = new CrossStateTransition(target) 
+       {            
+          public boolean isComplete() 
+          {
+             return (System.currentTimeMillis() - start) > 2000;
+          }
+
+          public void init(GameState firstState, GameState secondState) {
+          }
+       };
+       
+       game.enterState(TitleScreen.ID, new FadeOutTransition(Color.black), new FadeInTransition(Color.black));
+    
+ }
+}
+
 @Override
 public int getID() 
 {	
 	return ID;
 }//Returns ID of state
 
-
-/*
-public void moveShots(ArrayList<Mob> shots) {
-	int shtsze = shots.size();
-	for (int i = 0; i < shtsze; i++) {
-		shots.get(i).move();
-		if (shots.get(i).getX() > rightEdge + 100 || shots.get(i).getX() < -100) {
-			shots.remove(i);
-		}
-		else if (shots.get(i).getY() > bottomEdge + 100 || shots.get(i).getY() < -100) {
-			shots.remove(i);
-		}
-		shtsze = shots.size();
-		
-	}
-}
-*/
-
-/*
-public void checkPlayerCollisions(ArrayList<Mob> roids, ArrayList<Mob> powerups, int delta) 
-{
-	
-	if (invulnTime > invulnLength) 
-	{
-		invulnTime = 0;
-		player.setInvincible(false);
-	}
-	
-	else if (player.isInvincible()) 
-	{
-		invulnTime += delta;
-	}
-		
-	else 
-	{
-		for (Alien alien : aliens) 
-		{
-    			if(alien.getHitBox().intersects(player.getHitBox())) 
-	    		{
-	    			player.setLives(player.getLives()-1);
-	    			player.setInvincible(true);
-	    		}
-	    	}
-	}
-	
-}
-*/	
-
-
-/*
-public void checkShotCollisions(ArrayList<Mob> shots, ArrayList<Mob> roids) {
-	for (Mob shot : shots) {
-		for (int i = 0; i < roids.size(); i++) {
-			if(shot.getShape().intersects(roids.get(i).getShape())) {
-    			roids.remove(i);
-    			score ++;
-    			System.out.println("Shot Collision");
-    		}
-		}
-		
-	}	
-	}
-*/
 
 	
 }

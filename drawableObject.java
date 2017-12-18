@@ -22,8 +22,8 @@ public class drawableObject {
     public drawableObject() throws SlickException
     {
     		Random generator = new Random();
-        xPosition = generator.nextInt(100);
-        yPosition = generator.nextInt(100);
+        xPosition = generator.nextInt(800);
+        yPosition = generator.nextInt(800);
         xVelocity = Math.random()*-10;
         yVelocity = Math.random()*-10; 
         
@@ -144,7 +144,7 @@ public class drawableObject {
     }//Moves the block according to the x and y velocity
     
     
-    void checkPosition()
+    void checkPosition()	
     {
         int panelRight = 800; // gets max right X
         int panelBottom = 800;  // gets max bottom Y

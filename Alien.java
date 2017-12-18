@@ -14,11 +14,13 @@ public class Alien extends drawableObject
 {
 	private int xPosition;
     private int yPosition;
+    private int type;
 	private double xVelocity;
 	private double yVelocity;
 	private Animation alienAnimation;
 	private SpriteSheet alienSheet;
 	private Rectangle alienHitbox;
+	AnimationHandler animationHandler = new AnimationHandler();
 
 
     
@@ -29,24 +31,25 @@ public class Alien extends drawableObject
         yPosition = generator.nextInt(800);
         xVelocity = generator.nextInt(5);
         yVelocity = generator.nextInt(5); 
-        alienSheet = new SpriteSheet("data/alien_spritesheet.png", 32, 32);
-        alienAnimation = new Animation(alienSheet, 100);
+        type = generator.nextInt(4);
+        alienAnimation = animationHandler.getRandomAlienAnimation(type);
+		alienHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
+
+    }
+    public Alien(int myType) throws SlickException
+    {
+    		Random generator = new Random();
+        xPosition = generator.nextInt(800);
+        yPosition = generator.nextInt(800);
+        xVelocity = generator.nextInt(5);
+        yVelocity = generator.nextInt(5); 
+        type = generator.nextInt(4);
+        alienAnimation = animationHandler.getRandomAlienAnimation(type);
 		alienHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
 
     }
 
 	
-	public Alien(int myXPos, int myYPos, double myXVel, double myYVel) throws SlickException
-	{
-		xPosition = myXPos;
-        yPosition = myYPos;
-        xVelocity = constrain(myYVel, -10, 10);
-        yVelocity = constrain(myXVel, -10, 10);
-		alienSheet = new SpriteSheet("data/alien_spritesheet.png", 32, 32);
-		alienAnimation = new Animation(alienSheet, 100);
-		alienHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
-		
-	}
 	
 	// Used for the constructors in order to keep the values in the specified bounds
     public double constrain(double num, double lowBound, double highBound)
@@ -100,6 +103,11 @@ public class Alien extends drawableObject
     		return alienAnimation.getHeight();
 	}
     
+    public int getType() 
+    {	
+    		return type;
+	}
+    
     public Animation getAnimation()
     {
     		return alienAnimation;
@@ -130,7 +138,7 @@ public class Alien extends drawableObject
     
     public void moveBy(int dX, int dY)
     {
-    	alienHitbox.setX(this.getXPos());
+    		alienHitbox.setX(this.getXPos());
 		alienHitbox.setY(this.getYPos());
     		xPosition += dX;
     		yPosition += dY;
@@ -144,6 +152,45 @@ public class Alien extends drawableObject
     		alienHitbox.setX(this.getXPos());
     		alienHitbox.setY(this.getYPos());
     }//Moves the block according to the x and y velocity
+    
+    public void setAlienVelocity(double xVel, double yVel)
+	{
+		xVelocity = xVel;
+		yVelocity = yVel;
+	}
+    
+    void checkAlienPosition()
+    {
+        int panelRight = 800; // gets max right X
+        int panelBottom = 800;  // gets max bottom Y
+
+        	int rightX = this.getXPos() + this.getWidth();
+        	int leftX = this.getXPos();
+        	int topY = this.getYPos();
+        	int bottomY = this.getYPos() + this.getHeight();
+        	
+        	// Check if the object hits the RIGHT of the panel
+        	if(rightX > panelRight)
+        	{
+        		this.setAlienVelocity(-4.0, this.getYVel());
+        		
+        	// Check if the object hits the LEFT of the panel
+        	}else if(leftX < 0)
+        	{
+        		this.setAlienVelocity(4.0, this.getYVel());
+        		
+        	// Check if the object hits the TOP of the panel
+        	}else if(topY < 0 )
+        	{
+        		this.setAlienVelocity(this.getXVel(), 4.0);
+        		
+        	// Check if the object hits the BOTTOM of the panel
+        	}else if(bottomY > panelBottom)
+        	{
+        		this.setAlienVelocity(this.getXVel(), -4.0);
+        	}
+        	
+    }//end checkPosition
     
     
 

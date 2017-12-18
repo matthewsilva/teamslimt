@@ -14,15 +14,17 @@ public class Player extends drawableObject{
 	private double xVelocity;
 	private double yVelocity;
     private int lives;
+    private int healthPips;
     private int shotSpeed;
     private int shotSize;
     private int playerSpeed;
+    private long invulnLength;
     private boolean invincible;
     private Rectangle playerHitbox;
 	private Animation playerAnimation;
-	private SpriteSheet playerSheet;
 	private ShootingStrategy shotType;
-
+	AnimationHandler animationHandler = new AnimationHandler();
+	KeyboardInput input;
 
     
     public Player() throws SlickException
@@ -30,13 +32,15 @@ public class Player extends drawableObject{
         xVelocity = 0;
         yVelocity = 0;
         lives = 3;
+        healthPips = 3;
         shotSpeed = 5;
         playerSpeed = 1;
         invincible = false;
-        playerSheet = new SpriteSheet("data/ship.png", 72, 72);
-        playerAnimation = new Animation(playerSheet, 200);
+        invulnLength = 1000;
+        input = new KeyboardInput();
+        playerAnimation = animationHandler.getShipAnimation();
     		playerHitbox = new Rectangle(this.getXPos(),this.getYPos(), this.getWidth(), this.getHeight());
-    	shotType = new singleShot();
+    		shotType = new singleShot();
     	
     }
 
@@ -57,6 +61,21 @@ public class Player extends drawableObject{
     		return lives;
     }
     
+    public int getHealthPips()
+    {
+    		return healthPips;
+    }
+    
+    public int getEmptyLives()
+    {
+    		return 3 - lives;
+    }
+    
+    public long getInvulnLength()
+    {
+    		return invulnLength;
+    }
+    
     public int getShotSpeed()
     {
     		return shotSpeed;
@@ -64,7 +83,7 @@ public class Player extends drawableObject{
     
     public int getShotSize()
     {
-    	return shotSize;
+    		return shotSize;
     }
     
     
@@ -88,17 +107,32 @@ public class Player extends drawableObject{
     		return playerSpeed;
     }
     
+    public KeyboardInput getInput()
+    {
+    		return input;
+    }
+    
+    public ShootingStrategy getShotType()
+    {
+    		return shotType;
+    }
+    
     //Setter Methods
     public void setInvincible(boolean invuln) 
 	{
 		invincible = invuln;
 	}
     
-    public void setLives(int myLives)
+    public void setLives(int d)
     {
-    	if (myLives < lives && invincible == true);
-    	else
-    		lives = myLives;
+    		if (d < lives && invincible == true);
+    		else
+    		lives = d;
+    }
+    
+    public void setInvulnLength(Long time)
+    {
+    		invulnLength = time;
     }
     
     public void setShotSpeed(int myShotSpeed)
@@ -108,16 +142,36 @@ public class Player extends drawableObject{
     
     public void setShotSize(int myShotSize)
     {
-    	shotSize = myShotSize;
+    		shotSize = myShotSize;
     }
     
-    public void setShotType(ShootingStrategy type) {
-    	shotType = type;
+    public void setShotType(ShootingStrategy type) 
+    {
+    		shotType = type;
     }
     
     public void setSpeed(int myPlayerSpeed)
     {
     		playerSpeed = myPlayerSpeed;
+    }
+    
+    public void setHealthPips(int myHealthPips)
+    {
+    		healthPips = myHealthPips;
+    }
+    
+    public void incrementVelocity()
+	{
+    		if(input.getConstraint() < 20)
+    		{
+    			input.incrementConstraint();
+    		}
+	}
+    
+    public void decrementShotInterval()
+    {
+    	
+    		input.decrementInterval(200);
     }
     
 
@@ -156,15 +210,6 @@ public class Player extends drawableObject{
 	{
 		return shotType.rightShots(this);
 		
-	}
-
-	public String getlivesString() 
-	{
-		String str = "";
-		for (int i = 0; i < this.getLives(); i++)
-			str = str + " I ";
-		
-		return str;
 	}
 
 

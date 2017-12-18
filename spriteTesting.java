@@ -30,8 +30,11 @@ public class spriteTesting extends BasicGameState{
 	public static final int ID = 4; //State ID
 	private StateBasedGame game;
 	
-	private SpriteSheet alienSheet;
-	private Animation alienAnimation;
+	private AnimationHandler animation;
+	
+	
+
+
 	
 	
 	KeyboardInput input;
@@ -45,34 +48,170 @@ public class spriteTesting extends BasicGameState{
 	{
 		this.game = game;
 		
-		//Alien Animation
-		alienSheet = new SpriteSheet("data/alien_spritesheet.png", 32, 32);
-		alienAnimation = new Animation(alienSheet, 100);
-				
+		animation = new AnimationHandler();
 		
+		Powerup powerup = new Powerup(0);
+		System.out.println(powerup.getHitBox());
+		
+		
+		
+		/*//SpriteSheet Instantiation
+		mobSheet = new SpriteSheet("data/mobSpriteSheet.png", 38, 38);
+		bossSheet = new SpriteSheet("data/Bosssmol.png", 118, 92); 
+		shipSheet = new SpriteSheet("data/shiptrans.png",32, 35);
+		powerupSheet = new SpriteSheet("data/powerups.png", 16, 16);
+		
+		//Animation instantiation
+		purpleAnimation = new Animation();
+		redAnimation = new Animation();
+		greenAnimation = new Animation();
+		pinkAnimation = new Animation();
+		bossAnimation = new Animation();	
+		shipAnimation = new Animation();
+		healthAnimation = new Animation();
+		healthUpAnimation = new Animation();
+		doubleshotAnimation = new Animation();
+		invincibilityAnimation = new Animation();
+		speedupAnimation = new Animation();
+		armorAnimation = new Animation();
+		damageupAnimation = new Animation();
+
+
+
+
+		//MobAddFrameLoop guy
+		for (int i = 0; i < 4; i++)
+		{
+			purpleAnimation.addFrame(mobSheet.getSprite(0, i), 100);
+			redAnimation.addFrame(mobSheet.getSprite(1, i), 100);
+			greenAnimation.addFrame(mobSheet.getSprite(2, i), 100);
+			pinkAnimation.addFrame(mobSheet.getSprite(3, i), 100);
+		}
+		
+		//PowerupAddFrameLoop guy
+		for (int i = 0; i < 6; i++)
+		{
+			healthAnimation.addFrame(powerupSheet.getSprite(i, 0), 100);
+			healthUpAnimation.addFrame(powerupSheet.getSprite(i, 1), 100);
+			doubleshotAnimation.addFrame(powerupSheet.getSprite(i, 2), 100);
+			invincibilityAnimation.addFrame(powerupSheet.getSprite(i, 3), 100);
+			speedupAnimation.addFrame(powerupSheet.getSprite(i, 4), 100);
+			armorAnimation.addFrame(powerupSheet.getSprite(i, 5), 100);
+			damageupAnimation.addFrame(powerupSheet.getSprite(i, 2), 100);
+
+		}
+	
+		//BossAddFrameLoop guy
+		bossAnimation = new Animation();	
+		for (int i = 0; i < 6; i++)
+		{
+			bossAnimation.addFrame(bossSheet.getSprite(0, i), 100);
+		}
+		
+		
+		//ShipAddFrameLoop guy
+		for (int i = 0; i < 4; i++)
+		{
+			shipAnimation.addFrame(shipSheet.getSprite(0, i), 100);
+		}
+		*/
+		
+		
+		
+
 
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException 
 	{
- 	    
-		g.setColor(Color.green);
+		Powerup power = new Powerup(0);
+		Alien alien = new Alien(0);
 		
-	    for(int i = 0; i < 18; i++) 
+		//Single power up looping
+		for(int i = 0; i < 18; i++) 
 	    {
-	    		alienAnimation.draw(200, 200);
+	    		
 	    		for (int j = 0; j < 20; j++)
 	    		{
-	    			alienAnimation.draw(j * 50, i * 50);
+	    			power.getAnimation().draw(j * 60, i * 55);
+	    			System.out.println(power.getHitbox());
+	    		}
+	    }
+	    
+	    
+		
+		/*All power up looping
+		for(int i = 0; i < 18; i++) 
+	    {
+	    		Random rand = new Random();
+	    		
+	    		for (int j = 0; j < 20; j++)
+	    		{
+		    		int value = rand.nextInt(7);
+	    			if (value == 1)
+	    			{
+	    				animation.getHealthAnimation().draw(j * 50, i * 50);
+	    			} else if (value == 2) {
+	    				animation.getHealthUpAnimation().draw(j * 50, i * 50);
+	    			} else if (value == 3) {
+	    				animation.getDoubleshotAnimation().draw(j * 50, i * 50);
+	    			} else if (value == 4) {
+	    				animation.getInvincibilityAnimation().draw(j * 50, i * 50);
+	    			} else if (value == 5) {
+	    				animation.getSpeedupAnimation().draw(j * 50, i * 50);
+	    			} else if (value == 6) {
+	    				animation.getArmorAnimation().draw(j * 50, i * 50);
+	    			} else if (value == 7) {
+	    				animation.getDamageupAnimation().draw(j * 50, i * 50);
+	    			} 
 	    		}
 	    };
+	    */
+	       
+		
+		/*Boss looping
+		for(int i = 0; i < 10; i++)
+		{
+			for(int j = 0; j < 6; j++)
+			{
+				animation.getShipEmptyHealthAnimation().draw(j*135, i*90);
+			}
+		}
+		*/
+		
+			
+		/*Mob Looping
+	    for(int i = 0; i < 18; i++) 
+	    {
+	    		Random rand = new Random();
+	    		
+	    		for (int j = 0; j < 20; j++)
+	    		{
+		    		int value = rand.nextInt(4);
+	    			if (value == 1)
+	    			{
+	    				animation.getPurpleAnimation().draw(j * 50, i * 50);
+	    			} else if (value == 2) {
+	    				animation.getRedAnimation().draw(j * 50, i * 50);
+	    			} else if (value == 3) {
+	    				animation.getGreenAnimation().draw(j * 50, i * 50);
+	    			} else if (value == 4) {
+	    				animation.getPinkAnimation().draw(j * 50, i * 50);
+	    			}
+	    		}
+	    };
+	    */
+	    
+	    
+	    
+	    
+	    
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException 
 	{
-		alienAnimation.update(delta);
 	}
 
 	@Override
@@ -81,6 +220,8 @@ public class spriteTesting extends BasicGameState{
 		// TODO Auto-generated method stub
 		return ID;
 	}
+
+	
 
 	
 };

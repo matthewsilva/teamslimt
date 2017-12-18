@@ -7,30 +7,67 @@ public class KeyboardInput
 {
 	
 	private double velocityConstraint;
-
+	private int shotTime = 0;
+	private int shotInterval = 1000;
+	
 	public KeyboardInput() 
 	{
-		velocityConstraint = 20;
+		velocityConstraint = 10;
 	}
+
+	public KeyboardInput(double constraint) 
+	{
+		velocityConstraint = constraint;
+	}
+	
+	
+	public double getConstraint()
+	{
+		return velocityConstraint;
+	}
+	
+	public int getShotInterval()
+	{
+		return shotInterval;
+	}
+	
+	public void decrementInterval(int myInterval)
+	{
+		shotInterval -= myInterval;
+	}
+	
+	public void incrementConstraint()
+	{
+		velocityConstraint += 2;
+	}
+	
 	public void readInput(GameContainer container, int delta, Player player, ArrayList<Projectile> shots) {
 		Input input = container.getInput();
-		
+		shotTime += delta;
 
-		if (input.isKeyPressed(Input.KEY_UP))
+		if(shotTime >= shotInterval)
 		{
-			shots.addAll(player.shootUp(shots));
-		}
-		else if (input.isKeyPressed(Input.KEY_DOWN))
-		{
-			shots.addAll(player.shootDown(shots));
-		}
-		else if (input.isKeyPressed(Input.KEY_LEFT))
-		{
-			shots.addAll(player.shootLeft(shots));
-		}
-		else if (input.isKeyPressed(Input.KEY_RIGHT))
-		{
-			shots.addAll(player.shootRight(shots));
+			if (input.isKeyPressed(Input.KEY_UP))
+			{
+				shots.addAll(player.shootUp(shots));
+				shotTime = 0;
+			}
+			else if (input.isKeyPressed(Input.KEY_DOWN))
+			{
+				shots.addAll(player.shootDown(shots));
+				shotTime = 0;
+			}
+			else if (input.isKeyPressed(Input.KEY_LEFT))
+			{
+				shots.addAll(player.shootLeft(shots));
+				shotTime = 0;
+			}
+			else if (input.isKeyPressed(Input.KEY_RIGHT))
+			{
+				shots.addAll(player.shootRight(shots));
+				shotTime = 0;
+			}
+			
 		}
 		
     	if (input.isKeyDown(Input.KEY_W))
