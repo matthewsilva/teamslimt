@@ -1,4 +1,5 @@
 /*  
+
 * To change this template, choose Tools | Templates  
 * and open the template in the editor.  
 */  
@@ -92,7 +93,7 @@ public class AsteroidsGame extends BasicGame
     	movementTime += delta;
     	overallTime += delta;
     	overallPowerTime += delta;
-    	input.readInput(container, delta, player, shotList);
+    	//input.readInput(container, delta, player, shotList);
     	if (movementTime >= frameTime) {
     		movePlayer();
     		moveRoids(mobList);

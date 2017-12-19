@@ -3,47 +3,97 @@ import java.util.ArrayList;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 
-public class KeyboardInput {
-
-	public KeyboardInput() {
-		
+public class KeyboardInput 
+{
+	
+	private double velocityConstraint;
+	private int shotTime = 0;
+	private int shotInterval = 1000;
+	
+	public KeyboardInput() 
+	{
+		velocityConstraint = 10;
 	}
-	public void readInput(GameContainer container, int delta, Mob player, ArrayList<Mob> shots) {
+
+	public KeyboardInput(double constraint) 
+	{
+		velocityConstraint = constraint;
+	}
+	
+	
+	public double getConstraint()
+	{
+		return velocityConstraint;
+	}
+	
+	public int getShotInterval()
+	{
+		return shotInterval;
+	}
+	
+	public void decrementInterval(int myInterval)
+	{
+		shotInterval -= myInterval;
+	}
+	
+	public void incrementConstraint()
+	{
+		velocityConstraint += 2;
+	}
+	
+	public void readInput(GameContainer container, int delta, Player player, ArrayList<Projectile> shots) {
 		Input input = container.getInput();
-		if (input.isKeyPressed(Input.KEY_UP))
+		shotTime += delta;
+
+		if(shotTime >= shotInterval)
 		{
-			player.shootUp(shots);
-		}
-		else if (input.isKeyPressed(Input.KEY_DOWN))
-		{
-			player.shootDown(shots);
-		}
-		else if (input.isKeyPressed(Input.KEY_LEFT))
-		{
-			player.shootLeft(shots);
-		}
-		else if (input.isKeyPressed(Input.KEY_RIGHT))
-		{
-			player.shootRight(shots);
+			if (input.isKeyPressed(Input.KEY_UP))
+			{
+				shots.addAll(player.shootUp(shots));
+				shotTime = 0;
+			}
+			else if (input.isKeyPressed(Input.KEY_DOWN))
+			{
+				shots.addAll(player.shootDown(shots));
+				shotTime = 0;
+			}
+			else if (input.isKeyPressed(Input.KEY_LEFT))
+			{
+				shots.addAll(player.shootLeft(shots));
+				shotTime = 0;
+			}
+			else if (input.isKeyPressed(Input.KEY_RIGHT))
+			{
+				shots.addAll(player.shootRight(shots));
+				shotTime = 0;
+			}
+			
 		}
 		
     	if (input.isKeyDown(Input.KEY_W))
     	{
-    		player.setDy((float) (player.getDy() - 0.05));
+    		player.setYVelocity(player.constrain(player.getYVel() - 0.05, -velocityConstraint, velocityConstraint));
     	}
     	else if (input.isKeyDown(Input.KEY_S))
     	{
-    		player.setDy((float) (player.getDy() + 0.05));
+    		player.setYVelocity(player.constrain(player.getYVel() + 0.05, -velocityConstraint, velocityConstraint));
     	}
-    	else if (input.isKeyDown(Input.KEY_A))
+    	if (input.isKeyDown(Input.KEY_A))
     	{
-    		player.setDx((float) (player.getDx() - 0.05));
+        player.setXVelocity(player.constrain(player.getXVel() - 0.05, -velocityConstraint, velocityConstraint));
     	}
     	else if (input.isKeyDown(Input.KEY_D))
     	{
-    		player.setDx((float) (player.getDx() + 0.05));
+         player.setXVelocity(player.constrain(player.getXVel() + 0.05, -velocityConstraint, velocityConstraint));
     		//player.move(delta * 0.1f, 0);
     	}
-    	
+    	else if (input.isKeyDown(Input.KEY_E))
+    	{
+    		player.setVelocity(0, 0);
+    		
 	}
+    	else if (input.isKeyDown(Input.KEY_M)) {
+    		player.setShotType(new DoubleShot());
+    	}
+}
 }
